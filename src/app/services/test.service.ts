@@ -24,8 +24,9 @@ export class TestService {
     return this.http.delete(`${this.url}/${id}`)
   }
   
-  update(celulares: celulares): Observable<any>{
-    return this.http.put(this.url, celulares)
+  update(celulares: celulares): Observable<any> {
+    return this.http.put(`${this.url}/${celulares.id}`, celulares);
   }
+  
   
 }

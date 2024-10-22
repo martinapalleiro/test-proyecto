@@ -26,27 +26,45 @@
             <td><input [(ngModel)]="name" placeholder="NAME"></td>
             <td><input type="number" [(ngModel)]="price" placeholder="PRICE" min="0"></td>
             <td><input  [(ngModel)]="color" placeholder="COLOR"></td>
-            <td colspan="2"><button class="angular-button"(click)="save()">AGREGAR</button></td>
+            <td colspan="2">
+              <button class="angular-button" (click)="save()" [disabled]="isAdding">AGREGAR</button>
+            </td>
         </tr>
     </tfoot>
 </table>
 
 <ng-template #see let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title">{{ name2 }}</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-      </button>
+  <div class="modal-header">
+    <h4 class="modal-title">Vista celular</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body custom-modal-body">
+    <div>
+      <label>ID:</label>
+      <input type="text" [(ngModel)]="id2" disabled />
     </div>
-    <div class="modal-body">
-      <p>ID: {{ id2 }}</p>
-      <p>Price: {{ price2 }}</p>
-      <p>Color: {{ color2 }}</p>
+    <div>
+      <label>Nombre:</label>
+      <input type="text" [(ngModel)]="name2" />
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary" (click)="modal.close()">Close</button>
+    <div>
+      <label>Price:</label>
+      <input type="number" [(ngModel)]="price2" />
     </div>
-  </ng-template>
+    <div>
+      <label>Color:</label>
+      <input type="text" [(ngModel)]="color2" />
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="angular-button" (click)="update(modal)">Update</button>
+    <button type="button" class="angular-button" (click)="modal.dismiss('Cancel click')">Cancelar</button>
+  </div>
+</ng-template>
+
+
   
 
 

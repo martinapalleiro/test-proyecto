@@ -22,6 +22,7 @@ export class FirstComponent implements OnInit {
   @Input() color2: string
 
   @ViewChild('see') see: any
+  isAdding: boolean = false; 
 
   
  
@@ -40,6 +41,14 @@ export class FirstComponent implements OnInit {
   }
   save() {
     // Asignar valores a nuevoCelular
+    if (this.isAdding) return; // Evita ejecutar el método si ya se está agregando
+    this.isAdding = true;
+
+    if (!this.name || !this.color || this.price === null) {
+      this.isAdding = false; // Restablecer el estado
+      return; // Salir del método
+    }
+
 
     this.nuevoCelular.name = this.name;
     this.nuevoCelular.data = {
@@ -52,9 +61,11 @@ export class FirstComponent implements OnInit {
             // Insertar la nueva fila en la tabla
             this.insertTr(response);
             this.clearInputs();
+            this.isAdding = false;
         },
         (error) => {
             console.error('Error al agregar el celular:', error);
+            this.isAdding = false; 
         }
     );
 }
@@ -62,7 +73,7 @@ export class FirstComponent implements OnInit {
   insertTr(celular: celulares) {
     var tbody = document.getElementsByTagName('tbody')[0];
     var row = tbody.insertRow();
-    row.setAttribute('id', celular.id);
+    row.setAttribute('id', celular.id.toString());
 
     let cell: HTMLTableCellElement;
 
@@ -80,36 +91,50 @@ export class FirstComponent implements OnInit {
 
     cell = row.insertCell();
 
-    //boton ver
-    const viewButton = document.createElement('button');
-    viewButton.innerHTML = 'Ver';
-    viewButton.onclick = () => this.view(this.see, celular);
-    viewButton.classList.add('angular-button');
-    cell.appendChild(viewButton);
-    
-    //boton borrar
-    const deleteButton = document.createElement('button');
-    deleteButton.innerHTML = 'Eliminar'
-    deleteButton.onclick = () => this.delete(celular.id);
-    deleteButton.style.background='linear-gradient(135deg, #dd0031, #b52e3b)'
-    deleteButton.style.color='white'
-    deleteButton.style.border='none'
-    deleteButton.style.borderRadius='4px'
-    deleteButton.style.padding=' 5px 10px'
-    
-    cell.appendChild(deleteButton);
 
+
+  // Crear un contenedor para los botones
+const buttonContainer = document.createElement('div');
+buttonContainer.style.display = 'flex'; // Usar flexbox
+buttonContainer.style.alignItems = 'center'; // Alinear verticalmente
+
+// botón ver
+const viewButton = document.createElement('button');
+viewButton.innerHTML = 'Ver';
+viewButton.onclick = () => this.view(this.see, celular);
+viewButton.style.background = 'linear-gradient(135deg, #dd0031, #b52e3b)';
+viewButton.style.color = 'white';
+viewButton.style.border = 'none';
+viewButton.style.borderRadius = '4px';
+viewButton.style.padding = '5px 10px';
+viewButton.style.marginRight = '10px';
+
+buttonContainer.appendChild(viewButton);
+
+// botón borrar
+const deleteButton = document.createElement('button');
+deleteButton.innerHTML = 'Eliminar';
+deleteButton.onclick = () => this.delete(celular.id);
+deleteButton.style.background = 'linear-gradient(135deg, #dd0031, #b52e3b)';
+deleteButton.style.color = 'white';
+deleteButton.style.border = 'none';
+deleteButton.style.borderRadius = '4px';
+deleteButton.style.padding = '5px 10px';
+buttonContainer.appendChild(deleteButton);
+
+// Añadir el contenedor de botones a la celda
+cell.appendChild(buttonContainer);
 
 
     this.clearInputs();
 }
 
-  clearInputs() {
-    document.getElementsByTagName('input')[0].value = ''
-    document.getElementsByTagName('input')[1].value = ''
-    document.getElementsByTagName('input')[2].value = ''
-    document.getElementsByTagName('input')[0].focus()
-  }
+clearInputs() {
+  this.name = '';
+  this.color = '';
+  this.price =0;
+}
+ 
 
   delete(id: string): void {
     this.testService.delete(id).subscribe({
@@ -129,29 +154,36 @@ export class FirstComponent implements OnInit {
     this.name2 = celu.name;
     this.price2 = celu.data.price;
     this.color2 = celu.data.color;
-
+  
     // Abre el modal
-    //const modalRef = ;
-    
-    this.modalService.open(see).result.then(() => {
-      this.celulares.id = this.id2;
-      this.celulares.name = this.name2;
-      this.data.price = this.price2;
-      this.data.color = this.color2;
-      this.celulares.data = this.data;
-
-      // Realiza la actualización del dispositivo
-      this.testService.update(this.celulares).subscribe((response: celulares) => {
-        document.getElementById(String(response.id))?.remove(); // Asegúrate de que el ID es una cadena
-        this.insertTr(response); // Asegúrate de que esta función está definida
-      }, (error: any) => {
-        console.log(error);
-      });
+    this.modalService.open(see).result.then((result) => {
+      // No es necesario hacer nada aquí por ahora
     }, (reason) => {
-      // Manejo del cierre del modal si es necesario
       console.log('Modal dismissed with reason:', reason);
     });
   }
+  
+
+  update(modal: any) {
+    // Actualiza el objeto celulares con los valores modificados
+    this.celulares.id = this.id2;
+    this.celulares.name = this.name2;
+    this.celulares.data = {
+      price: this.price2,
+      color: this.color2
+    };
+  
+    // Realiza la actualización del dispositivo
+    this.testService.update(this.celulares).subscribe((response: celulares) => {
+      document.getElementById(String(response.id))?.remove(); 
+      this.insertTr(response); 
+  
+      modal.close(); // Cierra el modal después de la actualización
+    }, (error: any) => {
+      console.log(error);
+    });
+  }
+  
 
 
 
