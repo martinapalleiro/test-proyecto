@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild } from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { celulares } from '../../models/celulares';
 import { TestService } from '../../services/test.service';
 import { Data } from '../../models/data';
@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap'
 @Component({
   selector: 'app-first',
   templateUrl: './first.component.html',
-  styleUrls: ['./first.component.css'] // Cambia "styleUrl" por "styleUrls"
+  styleUrls: ['./first.component.css'] 
 })
 export class FirstComponent implements OnInit {
   celularesList=new Array<celulares>()
@@ -24,6 +24,10 @@ export class FirstComponent implements OnInit {
   @ViewChild('see') see: any
   isAdding: boolean = false; 
 
+  @ViewChild('nameInput') nameInput!: ElementRef;
+  @ViewChild('priceInput') priceInput!: ElementRef;
+  @ViewChild('colorInput') colorInput!: ElementRef;
+
   
  
   nuevoCelular: any = { name: '', price: null, color:null } // Objeto para almacenar datos del nuevo celular
@@ -33,41 +37,52 @@ export class FirstComponent implements OnInit {
   constructor(private testService: TestService, private modalService: NgbModal){}
 
   ngOnInit(): void {
-      // this.name="martina"
       this.testService.getAll().subscribe((response)=>{ 
       this.celularesList=response
     })
 
   }
   save() {
-    // Asignar valores a nuevoCelular
-    if (this.isAdding) return; // Evita ejecutar el método si ya se está agregando
+    if (this.isAdding) return;
     this.isAdding = true;
 
-    if (!this.name || !this.color || this.price === null) {
-      this.isAdding = false; // Restablecer el estado
-      return; // Salir del método
+    if (!this.name) {
+      this.nameInput.nativeElement.focus(); // Foco en el campo vacío
+      this.isAdding = false;
+      return;
     }
 
+    if (!this.color) {
+      this.colorInput.nativeElement.focus(); // Foco en el campo vacío
+      this.isAdding = false;
+      return;
+    }
 
+    if (this.price === null || this.price === undefined) {
+      this.priceInput.nativeElement.focus(); // Foco en el campo vacío
+      this.isAdding = false;
+      return;
+    }
+
+    // Asignar valores a nuevoCelular
     this.nuevoCelular.name = this.name;
     this.nuevoCelular.data = {
-        color: this.color,
-        price: this.price
+      color: this.color,
+      price: this.price
     };
 
-    this.testService.add(this.nuevoCelular).subscribe(
-        (response) => {
-            // Insertar la nueva fila en la tabla
-            this.insertTr(response);
-            this.clearInputs();
-            this.isAdding = false;
-        },
-        (error) => {
-            console.error('Error al agregar el celular:', error);
-            this.isAdding = false; 
-        }
+    this.testService.add(this.nuevoCelular).subscribe( //llama al servicio
+      (response) => {
+        this.insertTr(response); // en caso que sea una respuesta exitosa se agrega el celular
+        this.clearInputs();
+        this.isAdding = false;
+      },
+      (error) => {
+        console.error('Error al agregar el celular:', error);
+        this.isAdding = false; 
+      }
     );
+  
 }
 
   insertTr(celular: celulares) {

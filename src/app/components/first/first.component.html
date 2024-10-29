@@ -1,37 +1,37 @@
 
 <h1></h1>
 <table class="styled-table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>NAME</th>
-            <th>PRICE</th>
-            <th>COLOR</th>
-            <th colspan="2"></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor ="let celulares of celularesList">
-            <td *ngIf="celulares.data?.price">{{celulares.id}}</td>
-            <td *ngIf="celulares.data?.price">{{celulares.name}}</td>
-            <td *ngIf="celulares.data?.price">{{celulares.data.price}}</td>
-            <td *ngIf="celulares.data?.price ">{{celulares.data.color}}</td>
-            <td colspan="2"></td>
-
-        </tr>
-    </tbody>
-    <tfoot>
-        <tr>
-            <td></td>
-            <td><input [(ngModel)]="name" placeholder="NAME"></td>
-            <td><input type="number" [(ngModel)]="price" placeholder="PRICE" min="0"></td>
-            <td><input  [(ngModel)]="color" placeholder="COLOR"></td>
-            <td colspan="2">
-              <button class="angular-button" (click)="save()" [disabled]="isAdding">AGREGAR</button>
-            </td>
-        </tr>
-    </tfoot>
+  <thead>
+      <tr>
+          <th>ID</th>
+          <th>NAME</th>
+          <th>PRICE</th>
+          <th>COLOR</th>
+          <th colspan="2"></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr *ngFor="let celulares of celularesList">
+          <td *ngIf="celulares.data?.price">{{celulares.id}}</td>
+          <td *ngIf="celulares.data?.price">{{celulares.name}}</td>
+          <td *ngIf="celulares.data?.price">{{celulares.data.price}}</td>
+          <td *ngIf="celulares.data?.price">{{celulares.data.color}}</td>
+          <td colspan="2"></td>
+      </tr>
+  </tbody>
+  <tfoot>
+      <tr>
+          <td></td>
+          <td><input #nameInput [(ngModel)]="name" placeholder="NAME"></td>
+          <td><input #priceInput type="number" [(ngModel)]="price" placeholder="PRICE" min="0"></td>
+          <td><input #colorInput [(ngModel)]="color" placeholder="COLOR"></td>
+          <td colspan="2">
+            <button class="angular-button" (click)="save()" [disabled]="isAdding">AGREGAR</button>
+          </td>
+      </tr>
+  </tfoot>
 </table>
+
 
 <ng-template #see let-modal>
   <div class="modal-header">
