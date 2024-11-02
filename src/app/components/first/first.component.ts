@@ -5,10 +5,11 @@ import { Data } from '../../models/data';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap'
 
 @Component({
-  selector: 'app-first',
-  templateUrl: './first.component.html',
-  styleUrls: ['./first.component.css'] 
+  selector: 'app-first', // El nombre del componente, usado en HTML
+  templateUrl: './first.component.html', // Ruta del archivo HTML que define el template
+  styleUrls: ['./first.component.css'] // Ruta del archivo CSS que contiene los estilos para este componente
 })
+
 export class FirstComponent implements OnInit {
   celularesList=new Array<celulares>()
   celulares=new celulares()
@@ -24,11 +25,15 @@ export class FirstComponent implements OnInit {
   @ViewChild('see') see: any
   isAdding: boolean = false; 
 
-  @ViewChild('nameInput') nameInput!: ElementRef;
+  @ViewChild('nameInput') nameInput!: ElementRef; //busca un elemento en el template que tenga una referencia local llamada nameInput,
+  // se asume que no será null ni undefined en el momento de su uso. 
+  //ElementRef: Permite manipular el elemento directamente a través de su propiedad nativeElement
   @ViewChild('priceInput') priceInput!: ElementRef;
   @ViewChild('colorInput') colorInput!: ElementRef;
 
-  
+  @ViewChild('nameInput2') nameInput2!: ElementRef;
+  @ViewChild('priceInput2') priceInput2!: ElementRef;
+  @ViewChild('colorInput2') colorInput2!: ElementRef;
  
   nuevoCelular: any = { name: '', price: null, color:null } // Objeto para almacenar datos del nuevo celular
  
@@ -36,12 +41,13 @@ export class FirstComponent implements OnInit {
 
   constructor(private testService: TestService, private modalService: NgbModal){}
 
-  ngOnInit(): void {
-      this.testService.getAll().subscribe((response)=>{ 
-      this.celularesList=response
-    })
-
+  ngOnInit(): void { // Método que se ejecuta una vez que el componente ha sido inicializado
+    this.testService.getAll() // Llama al método getAll() del servicio testService
+      .subscribe((response) => { // Se suscribe al observable para recibir la respuesta
+        this.celularesList = response; // Asigna la respuesta a la propiedad celularesList
+      });
   }
+  
   save() {
     if (this.isAdding) return;
     this.isAdding = true;
@@ -71,7 +77,7 @@ export class FirstComponent implements OnInit {
       price: this.price
     };
 
-    this.testService.add(this.nuevoCelular).subscribe( //llama al servicio
+    this.testService.add(this.nuevoCelular).subscribe( // Llama al método add del servicio para agregar un nuevo celular
       (response) => {
         this.insertTr(response); // en caso que sea una respuesta exitosa se agrega el celular
         this.clearInputs();
@@ -86,11 +92,11 @@ export class FirstComponent implements OnInit {
 }
 
   insertTr(celular: celulares) {
-    var tbody = document.getElementsByTagName('tbody')[0];
+    var tbody = document.getElementsByTagName('tbody')[0]; // Obtiene el primer elemento <tbody> en el documento
     var row = tbody.insertRow();
-    row.setAttribute('id', celular.id.toString());
+    row.setAttribute('id', celular.id.toString()); // Establece el ID de la fila usando el ID del celular
 
-    let cell: HTMLTableCellElement;
+    let cell: HTMLTableCellElement;  // Declara una variable para las celdas de la fila
 
     cell = row.insertCell();
     cell.innerHTML = celular.id.toString();
@@ -109,39 +115,38 @@ export class FirstComponent implements OnInit {
 
 
   // Crear un contenedor para los botones
-const buttonContainer = document.createElement('div');
-buttonContainer.style.display = 'flex'; // Usar flexbox
-buttonContainer.style.alignItems = 'center'; // Alinear verticalmente
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style.display = 'flex'; // Usar flexbox
+  buttonContainer.style.alignItems = 'center'; // Alinear verticalmente
 
-// botón ver
-const viewButton = document.createElement('button');
-viewButton.innerHTML = 'Ver';
-viewButton.onclick = () => this.view(this.see, celular);
-viewButton.style.background = 'linear-gradient(135deg, #dd0031, #b52e3b)';
-viewButton.style.color = 'white';
-viewButton.style.border = 'none';
-viewButton.style.borderRadius = '4px';
-viewButton.style.padding = '5px 10px';
-viewButton.style.marginRight = '10px';
+  // botón ver
+  const viewButton = document.createElement('button');
+  viewButton.innerHTML = 'Ver';
+  viewButton.onclick = () => this.view(this.see, celular);
+  viewButton.style.background = 'linear-gradient(135deg, #dd0031, #b52e3b)';
+  viewButton.style.color = 'white';
+  viewButton.style.border = 'none';
+  viewButton.style.borderRadius = '4px';
+  viewButton.style.padding = '5px 10px';
+  viewButton.style.marginRight = '10px';
 
-buttonContainer.appendChild(viewButton);
+  buttonContainer.appendChild(viewButton);
 
-// botón borrar
-const deleteButton = document.createElement('button');
-deleteButton.innerHTML = 'Eliminar';
-deleteButton.onclick = () => this.delete(celular.id);
-deleteButton.style.background = 'linear-gradient(135deg, #dd0031, #b52e3b)';
-deleteButton.style.color = 'white';
-deleteButton.style.border = 'none';
-deleteButton.style.borderRadius = '4px';
-deleteButton.style.padding = '5px 10px';
-buttonContainer.appendChild(deleteButton);
+  // botón borrar
+  const deleteButton = document.createElement('button');
+  deleteButton.innerHTML = 'Eliminar';
+  deleteButton.onclick = () => this.delete(celular.id);
+  deleteButton.style.background = 'linear-gradient(135deg, #dd0031, #b52e3b)';
+  deleteButton.style.color = 'white';
+  deleteButton.style.border = 'none';
+  deleteButton.style.borderRadius = '4px';
+  deleteButton.style.padding = '5px 10px';
+  buttonContainer.appendChild(deleteButton);
 
-// Añadir el contenedor de botones a la celda
-cell.appendChild(buttonContainer);
+  // Añadir el contenedor de botones a la celda
+  cell.appendChild(buttonContainer);
 
-
-    this.clearInputs();
+  this.clearInputs();
 }
 
 clearInputs() {
@@ -180,6 +185,22 @@ clearInputs() {
   
 
   update(modal: any) {
+    // Verifica si todos los campos están vacíos
+    if (!this.name2) {
+      this.nameInput2.nativeElement.focus(); // Establece el foco en el campo de nombre
+      return; // Sale del método si el campo de nombre está vacío
+    }
+  
+    if (!this.color2) {
+      this.colorInput2.nativeElement.focus();
+      return; 
+    }
+  
+    if (this.price2 === null || this.price2 === undefined) {
+      this.priceInput2.nativeElement.focus(); 
+      return; 
+    }
+  
     // Actualiza el objeto celulares con los valores modificados
     this.celulares.id = this.id2;
     this.celulares.name = this.name2;
@@ -189,17 +210,15 @@ clearInputs() {
     };
   
     // Realiza la actualización del dispositivo
-    this.testService.update(this.celulares).subscribe((response: celulares) => {
-      document.getElementById(String(response.id))?.remove(); 
-      this.insertTr(response); 
-  
-      modal.close(); // Cierra el modal después de la actualización
-    }, (error: any) => {
-      console.log(error);
-    });
+    this.testService.update(this.celulares).subscribe(
+      (response: celulares) => {
+        document.getElementById(String(response.id))?.remove(); // Elimina la fila anterior del celular en la tabla
+        this.insertTr(response); // Inserta la nueva fila con los datos actualizados
+        modal.close(); // Cierra el modal después de la actualización
+      },
+      (error: any) => {
+        console.log('Error al actualizar el celular:', error); 
+      }
+    );
   }
-  
-
-
-
 }

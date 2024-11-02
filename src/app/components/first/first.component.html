@@ -43,19 +43,19 @@
   <div class="modal-body custom-modal-body">
     <div>
       <label>ID:</label>
-      <input type="text" [(ngModel)]="id2" disabled />
+      <input type="text" [(ngModel)]="id2"  disabled />
     </div>
     <div>
       <label>Nombre:</label>
-      <input type="text" [(ngModel)]="name2" />
+      <input type="text" #nameInput2 [(ngModel)]="name2" />
     </div>
     <div>
       <label>Price:</label>
-      <input type="number" [(ngModel)]="price2" />
+      <input type="number" #priceInput2 [(ngModel)]="price2" />
     </div>
     <div>
       <label>Color:</label>
-      <input type="text" [(ngModel)]="color2" />
+      <input type="text" #colorInput2 [(ngModel)]="color2" />
     </div>
   </div>
   <div class="modal-footer">
